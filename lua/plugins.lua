@@ -177,8 +177,8 @@ require('lazy').setup({
       suggestion = {
         -- This is 
         keymap = {
-          accept = "<C-m>",
-          accept_word = "<C-M>",
+          accept = "<C-M>",
+          accept_word = "<C-S-M>",
           accept_line = false,
           next = "<C-.>",
           prev = "<C-,>",

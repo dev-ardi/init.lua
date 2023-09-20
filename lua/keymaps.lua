@@ -140,13 +140,13 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnos
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
-local nmap = function(keys, func, desc)
-  vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
-end
 -- regular maps
+local nmap = function(keys, func, desc)
+  vim.keymap.set('n', keys, func, { desc = desc })
+end
 nmap('<leader>w', ':w<CR>', '[w]rite file')
 nmap('<leader>q', ':q<CR>', '[q]uit file')
-nmap('<leader>x', ':wqa<CR>', 'e[x]it nvim')
+nmap('<leader>x', ':x<CR>', 'e[x]it nvim')
 nmap('<leader>n', ':enew<CR>', '[n]ew buffer')
 
 nmap('<leader>o', ':Ex<CR>', '[o]pen tree')
