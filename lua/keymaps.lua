@@ -146,7 +146,7 @@ local nmap = function(keys, func, desc)
 end
 nmap('<leader>w', ':w<CR>', '[w]rite file')
 nmap('<leader>q', ':q<CR>', '[q]uit file')
-nmap('<leader>x', ':x<CR>', 'e[x]it nvim')
+nmap('<leader>x', ':wqa<CR>', 'e[x]it nvim')
 nmap('<leader>n', ':enew<CR>', '[n]ew buffer')
 
 nmap('<leader>o', ':Ex<CR>', '[o]pen tree')
@@ -157,13 +157,17 @@ vim.keymap.set({ 'n', 'v' }, 'L', '$', { silent = true })
 vim.keymap.set({ 'n', 'v' }, 'H', '^', { silent = true })
 
 vim.keymap.set({ 'n', 'v' }, 'Y', 'y$')
-vim.keymap.set('v', 'p', '"_dp')
+vim.keymap.set('v', 'p', '"_dP')
+
+vim.api.nvim_command('command! Resource luafile $MYVIMRC')
+vim.api.nvim_command('command! Config e $MYVIMRC')
 
 
 -- [[ Configure LSP ]]
-nmap('<leader>lr', vim.lsp.buf.rename, '[L]sp [R]ename')
+nmap('<leader>r', vim.lsp.buf.rename, '[R]ename')
 nmap('<leader>la', vim.lsp.buf.code_action, '[L]sp code [A]ction')
 nmap('<leader>lf', vim.lsp.buf.format, '[L]sp [f]ormat')
+nmap('<leader>lr', ':LspRestart<CR>', '[L]sp [r]eload')
 nmap('gd', vim.lsp.buf.definition, '[g]oto [d]efinition')
 nmap('gr', require('telescope.builtin').lsp_references, '[g]oto [r]eferences')
 nmap('gI', vim.lsp.buf.implementation, '[g]oto [i]mplementation')

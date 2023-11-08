@@ -120,10 +120,8 @@ require('lazy').setup({
 
   {
     'lukas-reineke/indent-blankline.nvim',
-    opts = {
-      char = '┊',
-      show_trailing_blankline_indent = false,
-    },
+    main = 'ibl',
+    opts = { },
   },
 
   -- "gc" to comment visual regions/lines
@@ -139,10 +137,10 @@ require('lazy').setup({
     opts = 
       {
         setup = {
-         pickers = {
-          find_files = {
-            hidden=true,
-            file_ignore_patterns = {".git/"},
+          pickers = {
+            find_files = {
+              hidden=true,
+              file_ignore_patterns = {".git/"},
             }
           }
         }
@@ -175,7 +173,6 @@ require('lazy').setup({
     autoStart = true,
     opts = {
       suggestion = {
-        -- This is 
         keymap = {
           accept = "<C-M>",
           accept_word = "<C-S-M>",
@@ -188,7 +185,76 @@ require('lazy').setup({
       },
     },
 
-  }
+  },
+  {
+    "rest-nvim/rest.nvim",
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter-textobjects',
+    },
+    opts = {
+      setup = {
+        -- Open request results in a horizontal split
+        result_split_horizontal = false,
+        -- Keep the http file buffer above|left when split horizontal|vertical
+        result_split_in_place = false,
+        -- Skip SSL verification, useful for unknown certificates
+        skip_ssl_verification = false,
+        -- Encode URL before making request
+        encode_url = true,
+        -- Highlight request on run
+        highlight = {
+          enabled = true,
+          timeout = 150,
+        },
+        result = {
+          -- toggle showing URL, HTTP info, headers at top the of result window
+          show_url = true,
+          -- show the generated curl command in case you want to launch
+          -- the same request via the terminal (can be verbose)
+          show_curl_command = false,
+          show_http_info = true,
+          show_headers = true,
+          -- executables or functions for formatting response body [optional]
+          -- set them to false if you want to disable them
+          formatters = {
+            json = "jq",
+            html = function(body)
+              return vim.fn.system({"tidy", "-i", "-q", "-"}, body)
+            end
+          },
+        },
+        -- Jump to request line on run
+        jump_to_request = false,
+        env_file = '.env',
+        custom_dynamic_variables = {},
+        yank_dry_run = true,
+      }
+
+    }
+
+  },
+  {
+    "nvim-neorg/neorg",
+    build = ":Neorg sync-parsers",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      require("neorg").setup {
+        load = {
+          ["core.defaults"] = {}, -- Loads default behaviour
+          ["core.concealer"] = {}, -- Adds pretty icons to your documents
+          ["core.completion"] = {}, -- Adds pretty icons to your documents
+          ["core.dirman"] = { -- Manages Neorg workspaces
+            config = {
+              workspaces = {
+                notes = "~/notes",
+              },
+            },
+          },
+        },
+      }
+    end,
+  },
+
 
   -- require 'kickstart.plugins.autoformat',
   -- require 'kickstart.plugins.debug',

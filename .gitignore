@@ -3,3 +3,4 @@ test.sh
 .luarc.json
 nvim
 neovide_backtraces.log
+
