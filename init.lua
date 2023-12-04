@@ -2,6 +2,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ','
 
 require("plugins")
+require("plug-config")
 require("options")
 require("keymaps")
 require("lsp")

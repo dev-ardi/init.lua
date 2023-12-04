@@ -13,6 +13,7 @@ if not vim.loop.fs_stat(lazypath) then
 end
 
 require('lazy').setup({
+
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb', --GitHub
   'tpope/vim-sleuth',
@@ -22,7 +23,7 @@ require('lazy').setup({
 
   'andweeb/presence.nvim',
 
-
+  "folke/neoconf.nvim",
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
   {
@@ -78,16 +79,16 @@ require('lazy').setup({
           vim.keymap.set(mode, l, r, opts)
         end
 
-        local gs = package.loaded.gitsigns
-        map('n', '<leader>GN', gs.prev_hunk, '[G]it go to Previous Hunk')
-        map('n', '<leader>Gn', gs.next_hunk, '[G]it go to [N]ext Hunk')
-        map('n', '<leader>Gh', gs.preview_hunk, '[G]it [p]review hunk')
+        local gs = require("gitsigns")
+        map('n', '<leader>GH', gs.prev_hunk, '[G]it go to Previous Hunk')
+        map('n', '<leader>Gh', gs.next_hunk, '[G]it go to Next Hunk')
+        map('n', '<leader>Gp', gs.preview_hunk, '[G]it [p]review hunk')
         map('n', '<leader>Gsh', gs.stage_hunk, '[G]it [s]tage [h]unk')
         map('n', '<leader>Gsb', gs.stage_buffer, '[G]it [s]tage [b]uffer')
         map('n', '<leader>GSh', gs.undo_stage_hunk, '[G]it  un[S]tage [h]unk')
         map('n', '<leader>Gr', gs.reset_buffer, '[G]it [r]eset buffer')
-        map('n', '<leader>Gb', function() gs.blame_line { full = true } end, '[G]it [b]lame')
-        map('n', '<leader>GB', gs.toggle_current_line_blame, '[G]it [B]lame toggle')
+        map('n', '<leader>GB', function() gs.blame_line { full = true } end, '[G]it [b]lame this line')
+        map('n', '<leader>Gb', gs.toggle_current_line_blame, '[G]it [B]lame toggle')
         map('n', '<leader>Gd', gs.diffthis, '[G]it [d]iff')
         map('n', '<leader>Gdt', function() gs.diffthis('~') end, '[G]it [d]iff [t]his')
         map('n', '<leader>Gg', gs.toggle_deleted, '[G]it [g]one (toggle deleted)')
@@ -121,30 +122,30 @@ require('lazy').setup({
   {
     'lukas-reineke/indent-blankline.nvim',
     main = 'ibl',
-    opts = { },
+    opts = {},
   },
 
-  -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
 
   {
     'nvim-telescope/telescope-fzf-native.nvim',
-    build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build'
+    build =
+    'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build'
   },
   {
     'nvim-telescope/telescope.nvim',
     branch = '0.1.x',
-    opts = 
-      {
-        setup = {
-          pickers = {
-            find_files = {
-              hidden=true,
-              file_ignore_patterns = {".git/"},
-            }
+    opts =
+    {
+      setup = {
+        pickers = {
+          find_files = {
+            hidden = true,
+            file_ignore_patterns = { ".git/" },
           }
         }
-      },
+      }
+    },
     dependencies = {
       'nvim-lua/plenary.nvim',
       {
@@ -156,7 +157,6 @@ require('lazy').setup({
       },
     },
   },
-
   {
     -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
@@ -165,11 +165,13 @@ require('lazy').setup({
     },
     build = ':TSUpdate',
   },
-  "nvim-lua/plenary.nvim",
-  "ThePrimeagen/harpoon",
+  {
+    "ThePrimeagen/harpoon",
+    event = "VeryLazy",
+  },
   {
     "zbirenbaum/copilot.lua",
-    event = "VeryLazy",
+    -- event = "VeryLazy",
     autoStart = true,
     opts = {
       suggestion = {
@@ -184,7 +186,6 @@ require('lazy').setup({
         },
       },
     },
-
   },
   {
     "rest-nvim/rest.nvim",
@@ -219,7 +220,7 @@ require('lazy').setup({
           formatters = {
             json = "jq",
             html = function(body)
-              return vim.fn.system({"tidy", "-i", "-q", "-"}, body)
+              return vim.fn.system({ "tidy", "-i", "-q", "-" }, body)
             end
           },
         },
@@ -233,29 +234,33 @@ require('lazy').setup({
     }
 
   },
-  {
-    "nvim-neorg/neorg",
-    build = ":Neorg sync-parsers",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    config = function()
-      require("neorg").setup {
-        load = {
-          ["core.defaults"] = {}, -- Loads default behaviour
-          ["core.concealer"] = {}, -- Adds pretty icons to your documents
-          ["core.completion"] = {}, -- Adds pretty icons to your documents
-          ["core.dirman"] = { -- Manages Neorg workspaces
-            config = {
-              workspaces = {
-                notes = "~/notes",
-              },
-            },
-          },
-        },
-      }
-    end,
-  },
 
 
-  -- require 'kickstart.plugins.autoformat',
-  -- require 'kickstart.plugins.debug',
+  -- {
+  --   "nvim-neorg/neorg",
+  --   build = ":Neorg sync-parsers",
+  --   dependencies = { "nvim-lua/plenary.nvim" },
+  --   config = function()
+  --     require("neorg").setup {
+  --       load = {
+  --         ["core.defaults"] = {}, -- Loads default behaviour
+  --         ["core.concealer"] = {}, -- Adds pretty icons to your documents
+  --         ["core.completion"] = {}, -- Adds pretty icons to your documents
+  --         ["core.dirman"] = { -- Manages Neorg workspaces
+  --           config = {
+  --             workspaces = {
+  --               notes = "~/notes",
+  --             },
+  --           },
+  --         },
+  --       },
+  --     }
+  --   end,
+  -- },
+  --
+  require 'kickstart.plugins.debug',
+
+  require 'kickstart.plugins.autoformat',
 }, {})
+
+require("plug-config")
