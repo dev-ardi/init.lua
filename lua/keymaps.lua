@@ -123,17 +123,18 @@ vim.api.nvim_command('command! Config e $MYVIMRC')
 
 
 -- [[ Configure LSP ]]
+local function tscope_lsp(key, f, desc)
+  local fn = require('telescope.builtin')[f]
+  vim.keymap.set('n', 'g' .. key, fn, { desc = '[G]o to ' .. get_desc(f, desc) })
+end
+
+nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
 nmap('<leader>r', vim.lsp.buf.rename, '[R]ename')
 nmap('<leader>a', vim.lsp.buf.code_action, '[L]sp code [A]ction')
 nmap('<leader>lf', vim.lsp.buf.format, '[L]sp [f]ormat')
 nmap('<leader>lh', vim.lsp.buf.document_highlight, '[L]sp [h]ighlight')
+nmap('<leader>lH', vim.lsp.buf.clear_references, '[L]sp [h]ighlight')
 nmap('<leader>lr', ':LspRestart<CR>', '[L]sp [r]eload')
-
-local function tscope_lsp(key, f, desc)
-  local fn = require('telescope.builtin')[f]
-  vim.keymap.set('n', 'g' .. key, fn, { desc = '[G]o to ' .. get_desc(arg, desc) })
-end
-
 tscope_lsp('d', "lsp_definitions", '[d]efinition')
 tscope_lsp('i', "lsp_implementations", '[i]mplementation')
 tscope_lsp('t', "lsp_type_definitions", '[t]ype [d]efinition')
@@ -142,7 +143,6 @@ tscope_lsp('z', "lsp_incoming_calls")
 tscope_lsp('Z', "lsp_outgoing_calls")
 tscope_lsp('s', "lsp_document_symbols")
 tscope_lsp('S', "lsp_workspace_symbols")
-nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
 
 -- [[ Harpoon ]]
 local harpoon = require("harpoon.ui")
