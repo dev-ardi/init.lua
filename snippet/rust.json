@@ -1,0 +1,102 @@
+{
+  "allow": {
+    "prefix": "allow",
+    "body": [
+      "#![allow(${1})]"
+    ],
+    "description": "#![allow(…)]"
+  },
+  "deny": {
+    "prefix": "deny",
+    "body": [
+      "#![deny(${1})]"
+    ],
+    "description": "#![deny(…)]"
+  },
+  "warn": {
+    "prefix": "warn",
+    "body": [
+      "#![warn(${1})]"
+    ],
+    "description": "#![warn(…)]"
+  },
+  "feature": {
+    "prefix": "feature",
+    "body": [
+      "#![feature(${1})]"
+    ],
+    "description": "#![feature(…)]"
+  },
+  "cfg": {
+    "prefix": "cfg",
+    "body": [
+      "#[cfg(${1})]"
+    ],
+    "description": "#[cfg(…)]"
+  },
+  "modtest": {
+    "prefix": "modtest",
+    "body": [
+      "#[cfg(test)]",
+      "mod test {",
+      "    #[test]",
+      "    fn ${1:name}() {",
+      "        ${2:todo!();}",
+      "    }",
+      "}"
+    ],
+    "description": "#[cfg(test)]\nmod test {...}"
+  },
+  "cfg!": {
+    "prefix": "cfg!",
+    "body": [
+      "cfg!(${1})"
+    ],
+    "description": "cfg!(…)"
+  },
+  "iflet": {
+    "prefix": "if-let",
+    "body": [
+      "if let Some(val) = ${2:expr} {",
+      "    ",
+      "}"
+    ],
+    "description": "if let … = … { … }"
+  },
+  "letelse": {
+    "prefix": "letelse",
+    "body": [
+      "let Some(val) = ${2:expr} else {",
+      "    ",
+      "}"
+    ]
+  },
+  "tokiomain": {
+    "prefix": "main",
+    "body": [
+      "[tokio::main]",
+      "async fn main() {",
+      "    ",
+      "}"
+    ],
+    "description": "fn main() { … }"
+  },
+  "test": {
+    "prefix": "test",
+    "body": [
+      "#[test]",
+      "fn ${1:name}() {",
+      "    ${2:unimplemented!();}",
+      "}"
+    ],
+    "description": "#[test]"
+  },
+  "spawn": {
+    "prefix": "spawn",
+    "body": [
+      "tokio::spawn(async move {",
+      "    ",
+      "});"
+    ]
+  }
+}

@@ -1,9 +1,7 @@
 local servers = {
-  rust_analyzer = { },
-  -- clangd = {},
-  -- gopls = {},
+  rust_analyzer = {},
   -- pyright = {},
-  -- html = { filetypes = { 'html', 'twig', 'hbs'} },
+  html = { filetypes = { 'html', 'twig', 'hbs' } },
 
   lua_ls = {
     Lua = {
@@ -37,6 +35,35 @@ mason_lspconfig.setup_handlers {
     }
   end
 }
+
+require('lspconfig').rust_analyzer.setup({
+  on_attach = on_attach,
+  settings = {
+    ["rust-analyzer"] = {
+      imports = {
+        granularity = {
+          group = "module",
+        },
+        prefix = "self",
+      },
+      cargo = {
+        buildScripts = {
+          enable = true,
+        },
+        extraArgs = { "--target-dir=target/analyzer" },
+      },
+      procMacro = {
+        enable = true
+      },
+      server = {
+        extraEnv = { CARGO_TARGET_DIR = "target/analyzer" },
+      },
+      check = {
+        command = "clippy"
+      }
+    }
+  }
+})
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`

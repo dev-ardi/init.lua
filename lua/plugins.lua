@@ -21,7 +21,14 @@ require('lazy').setup({
   'tpope/vim-repeat',
   'tpope/vim-speeddating',
 
-  'andweeb/presence.nvim',
+  {
+    'windwp/nvim-autopairs',
+    event = "InsertEnter",
+    config = true
+  },
+
+  "ii14/neorepl.nvim",
+  -- 'andweeb/presence.nvim',
 
   "folke/neoconf.nvim",
   -- NOTE: This is where your plugins related to LSP can be installed.
@@ -53,7 +60,7 @@ require('lazy').setup({
       'hrsh7th/cmp-nvim-lsp',
 
       -- Adds a number of user-friendly snippets
-      'rafamadriz/friendly-snippets',
+      -- 'rafamadriz/friendly-snippets',
     },
   },
 
@@ -158,7 +165,6 @@ require('lazy').setup({
     },
   },
   {
-    -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
@@ -170,34 +176,18 @@ require('lazy').setup({
     event = "VeryLazy",
   },
   {
-    "zbirenbaum/copilot.lua",
-    -- event = "VeryLazy",
-    autoStart = true,
-    opts = {
-      suggestion = {
-        keymap = {
-          accept = "<C-M>",
-          accept_word = "<C-S-M>",
-          accept_line = false,
-          next = "<C-.>",
-          prev = "<C-,>",
-          dismiss = "<C-/>",
-          toggle = "<C-?>",
-        },
-      },
-    },
-  },
-  {
     "rest-nvim/rest.nvim",
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
-    opts = {
-      setup = {
+    config = function()
+      require("rest-nvim").setup({
         -- Open request results in a horizontal split
         result_split_horizontal = false,
         -- Keep the http file buffer above|left when split horizontal|vertical
         result_split_in_place = false,
+        -- stay in current windows (.http file) or change to results window (default)
+        stay_in_current_window_after_split = false,
         -- Skip SSL verification, useful for unknown certificates
         skip_ssl_verification = false,
         -- Encode URL before making request
@@ -215,6 +205,9 @@ require('lazy').setup({
           show_curl_command = false,
           show_http_info = true,
           show_headers = true,
+          -- table of curl `--write-out` variables or false if disabled
+          -- for more granular control see Statistics Spec
+          show_statistics = false,
           -- executables or functions for formatting response body [optional]
           -- set them to false if you want to disable them
           formatters = {
@@ -227,40 +220,20 @@ require('lazy').setup({
         -- Jump to request line on run
         jump_to_request = false,
         env_file = '.env',
+        -- for telescope select
+        env_pattern = "\\.env$",
+        env_edit_command = "tabedit",
         custom_dynamic_variables = {},
         yank_dry_run = true,
-      }
-
-    }
+        search_back = true,
+      })
+    end
 
   },
-
-
-  -- {
-  --   "nvim-neorg/neorg",
-  --   build = ":Neorg sync-parsers",
-  --   dependencies = { "nvim-lua/plenary.nvim" },
-  --   config = function()
-  --     require("neorg").setup {
-  --       load = {
-  --         ["core.defaults"] = {}, -- Loads default behaviour
-  --         ["core.concealer"] = {}, -- Adds pretty icons to your documents
-  --         ["core.completion"] = {}, -- Adds pretty icons to your documents
-  --         ["core.dirman"] = { -- Manages Neorg workspaces
-  --           config = {
-  --             workspaces = {
-  --               notes = "~/notes",
-  --             },
-  --           },
-  --         },
-  --       },
-  --     }
-  --   end,
-  -- },
+  -- require 'kickstart.plugins.debug',
   --
-  require 'kickstart.plugins.debug',
+  -- require 'kickstart.plugins.autoformat',
 
-  require 'kickstart.plugins.autoformat',
-}, {})
+})
 
 require("plug-config")
