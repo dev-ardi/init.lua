@@ -25,18 +25,19 @@ require('telescope').setup {
 
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
+pcall(require('telescope').load_extension, 'ui-select')
 
 require('treesitter-cfg')
 
 -- See `:help telescope.builtin`
 
-local function get_desc(arg, desc)
-  if desc then return desc else return arg end
+local function get_desc(f, desc)
+  if desc then return desc else return f end
 end
 
 local function tscope(key, f, desc)
   local fn = require('telescope.builtin')[f]
-  vim.keymap.set('n', '<leader>f' .. key, fn, { desc = '[f]ind ' .. get_desc(arg, desc) })
+  vim.keymap.set('n', '<leader>f' .. key, fn, { desc = '[f]ind ' .. get_desc(f, desc) })
 end
 
 local function tscope_drop(key, f, desc)
@@ -47,7 +48,7 @@ local function tscope_drop(key, f, desc)
         previewer = false,
       }
     )
-  end, { desc = '[f]ind ' .. get_desc(arg, desc) })
+  end, { desc = '[f]ind ' .. get_desc(f, desc) })
 end
 
 tscope_drop('/', 'current_buffer_fuzzy_find', '[/] fuzzy find in current buffer')
@@ -59,16 +60,23 @@ tscope('d', 'diagnostics', '[d]iagnostics')
 tscope('h', 'help_tags', '[h]elp')
 tscope('o', 'oldfiles', '[o]ld files')
 tscope('b', 'builtin', '[b]uiltin')
+tscope('c', 'commands')
+tscope('k', 'keymaps')
+tscope('m', 'marks')
+tscope('s', 'symbols')
+tscope('?', 'search_history')
+tscope('r', 'resume')
+vim.keymap.set('n', '<leader>fn', function()
+  require('telescope.builtin').find_files { cwd = vim.fn.stdpath 'config' }
+end, { desc = '[S]earch [N]eovim files' })
 
--- command_history
--- commands
+
 -- git_bcommits
 -- git_branches
 -- git_commits
 -- git_files
 -- git_stash
 -- git_status
--- grep_string
 -- help_tags
 -- highlights
 -- jumplist
@@ -77,9 +85,6 @@ tscope('b', 'builtin', '[b]uiltin')
 -- loclist
 -- man_pages
 -- marks
--- oldfiles
--- quickfix
--- quickfixhistory
 -- registers
 -- reloader
 -- resume
@@ -117,6 +122,11 @@ vim.keymap.set({ 'n', 'v' }, 'H', '^', { silent = true })
 
 vim.keymap.set({ 'n', 'v' }, 'Y', 'y$')
 vim.keymap.set('v', 'p', '"_dP')
+
+vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 vim.api.nvim_command('command! Resource luafile $MYVIMRC')
 vim.api.nvim_command('command! Config e $MYVIMRC')

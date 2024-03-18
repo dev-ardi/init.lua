@@ -17,9 +17,15 @@ require('lazy').setup({
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb', --GitHub
   'tpope/vim-sleuth',
-  'tpope/vim-surround',
   'tpope/vim-repeat',
   'tpope/vim-speeddating',
+
+  {
+    "kylechui/nvim-surround",
+    version = "*", -- Use for stability; omit to use `main` branch for the latest features
+    event = "VeryLazy",
+    setup = {}
+  },
 
   {
     'windwp/nvim-autopairs',
@@ -36,14 +42,16 @@ require('lazy').setup({
   {
     -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
+    -- config = function() require "lsp" end,
     dependencies = {
       -- Automatically install LSPs to stdpath for neovim
       { 'williamboman/mason.nvim', config = true },
       'williamboman/mason-lspconfig.nvim',
+      'WhoIsSethDaniel/mason-tool-installer.nvim',
 
-      { 'j-hui/fidget.nvim',       tag = 'legacy', opts = {} }, --LSP progress
+      'j-hui/fidget.nvim', --LSP progress
 
-      -- Additional lua configuration, makes nvim stuff amazing!
+      -- Additional lua configuration, makes nvim stuff amazing!plug
       'folke/neodev.nvim',
     },
   },
@@ -51,13 +59,19 @@ require('lazy').setup({
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
+    event = 'InsertEnter',
     dependencies = {
       -- Snippet Engine & its associated nvim-cmp source
-      'L3MON4D3/LuaSnip',
+      {
+        'L3MON4D3/LuaSnip',
+        build = 'make install_jsregexp'
+      },
+
       'saadparwaiz1/cmp_luasnip',
 
       -- Adds LSP completion capabilities
       'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-path',
 
       -- Adds a number of user-friendly snippets
       -- 'rafamadriz/friendly-snippets',
@@ -65,42 +79,21 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim',  opts = {} },
-  {
-    -- Adds git related signs to the gutter, as well as utilities for managing changes
-    'lewis6991/gitsigns.nvim',
-    opts = {
-      -- See `:help gitsigns.txt`
-      signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-      },
-      on_attach = function(bufnr)
-        local function map(mode, l, r, desc, opts)
-          opts = opts or {}
-          opts.buffer = bufnr
-          opts.desc = desc
-          vim.keymap.set(mode, l, r, opts)
-        end
+  {                     -- Useful plugin to show you pending keybinds.
+    'folke/which-key.nvim',
+    event = 'VimEnter', -- Sets the loading event to 'VimEnter'
+    config = function() -- This is the function that runs, AFTER loading
+      require('which-key').setup()
 
-        local gs = require("gitsigns")
-        map('n', '<leader>GH', gs.prev_hunk, '[G]it go to Previous Hunk')
-        map('n', '<leader>Gh', gs.next_hunk, '[G]it go to Next Hunk')
-        map('n', '<leader>Gp', gs.preview_hunk, '[G]it [p]review hunk')
-        map('n', '<leader>Gsh', gs.stage_hunk, '[G]it [s]tage [h]unk')
-        map('n', '<leader>Gsb', gs.stage_buffer, '[G]it [s]tage [b]uffer')
-        map('n', '<leader>GSh', gs.undo_stage_hunk, '[G]it  un[S]tage [h]unk')
-        map('n', '<leader>Gr', gs.reset_buffer, '[G]it [r]eset buffer')
-        map('n', '<leader>GB', function() gs.blame_line { full = true } end, '[G]it [b]lame this line')
-        map('n', '<leader>Gb', gs.toggle_current_line_blame, '[G]it [B]lame toggle')
-        map('n', '<leader>Gd', gs.diffthis, '[G]it [d]iff')
-        map('n', '<leader>Gdt', function() gs.diffthis('~') end, '[G]it [d]iff [t]his')
-        map('n', '<leader>Gg', gs.toggle_deleted, '[G]it [g]one (toggle deleted)')
-      end,
-    },
+      -- Document existing key chains
+      require('which-key').register {
+        ['<leader>l'] = { name = '[l]sp', _ = 'which_key_ignore' },
+        ['<leader>f'] = { name = '[f]ind', _ = 'which_key_ignore' },
+        ['<leader>h'] = { name = '[h]arpoon', _ = 'which_key_ignore' },
+        ['<leader>G'] = { name = '[G]it', _ = 'which_key_ignore' },
+        ['<leader>W'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+      }
+    end,
   },
 
   {
@@ -132,7 +125,7 @@ require('lazy').setup({
     opts = {},
   },
 
-  { 'numToStr/Comment.nvim', opts = {} },
+  { 'numToStr/Comment.nvim',    opts = {} },
 
   {
     'nvim-telescope/telescope-fzf-native.nvim',
@@ -162,6 +155,8 @@ require('lazy').setup({
           return vim.fn.executable 'make' == 1
         end,
       },
+      { 'nvim-telescope/telescope-ui-select.nvim' },
+      { 'nvim-tree/nvim-web-devicons',            enabled = vim.g.have_nerd_font },
     },
   },
   {
@@ -175,65 +170,34 @@ require('lazy').setup({
     "ThePrimeagen/harpoon",
     event = "VeryLazy",
   },
-  {
-    "rest-nvim/rest.nvim",
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter-textobjects',
+  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+
+  -- require 'plugs.rest',
+  require 'plugs.gitsigns',
+  require 'kickstart.plugins.debug',
+
+  require 'kickstart.plugins.autoformat',
+
+}, {
+  ui = {
+    -- If you have a Nerd Font, set icons to an empty table which will use the
+    -- default lazy.nvim defined Nerd Font icons otherwise define a unicode icons table
+    icons = vim.g.have_nerd_font and {} or {
+      -- cmd = '⌘',
+      -- config = '🛠',
+      -- event = '📅',
+      -- ft = '📂',
+      -- init = '⚙',
+      -- keys = '🗝',
+      -- plugin = '🔌',
+      -- runtime = '💻',
+      -- require = '🌙',
+      -- source = '📄',
+      -- start = '🚀',
+      -- task = '📌',
+      -- lazy = '💤 ',
     },
-    config = function()
-      require("rest-nvim").setup({
-        -- Open request results in a horizontal split
-        result_split_horizontal = false,
-        -- Keep the http file buffer above|left when split horizontal|vertical
-        result_split_in_place = false,
-        -- stay in current windows (.http file) or change to results window (default)
-        stay_in_current_window_after_split = false,
-        -- Skip SSL verification, useful for unknown certificates
-        skip_ssl_verification = false,
-        -- Encode URL before making request
-        encode_url = true,
-        -- Highlight request on run
-        highlight = {
-          enabled = true,
-          timeout = 150,
-        },
-        result = {
-          -- toggle showing URL, HTTP info, headers at top the of result window
-          show_url = true,
-          -- show the generated curl command in case you want to launch
-          -- the same request via the terminal (can be verbose)
-          show_curl_command = false,
-          show_http_info = true,
-          show_headers = true,
-          -- table of curl `--write-out` variables or false if disabled
-          -- for more granular control see Statistics Spec
-          show_statistics = false,
-          -- executables or functions for formatting response body [optional]
-          -- set them to false if you want to disable them
-          formatters = {
-            json = "jq",
-            html = function(body)
-              return vim.fn.system({ "tidy", "-i", "-q", "-" }, body)
-            end
-          },
-        },
-        -- Jump to request line on run
-        jump_to_request = false,
-        env_file = '.env',
-        -- for telescope select
-        env_pattern = "\\.env$",
-        env_edit_command = "tabedit",
-        custom_dynamic_variables = {},
-        yank_dry_run = true,
-        search_back = true,
-      })
-    end
-
   },
-  -- require 'kickstart.plugins.debug',
-  --
-  -- require 'kickstart.plugins.autoformat',
-
 })
 
 require("plug-config")

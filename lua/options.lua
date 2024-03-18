@@ -1,12 +1,18 @@
-vim.opt.swapfile = false
-
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
--- NOTE: You can change these options as you wish!
+
+vim.opt.swapfile = false
+
+-- Set to true if you have a Nerd Font installed
+vim.g.have_nerd_font = false
 
 -- Set highlight on search
-vim.o.hlsearch = false
+vim.opt.hlsearch = true
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+
+-- Don't show the mode, since it's already in status line
+vim.opt.showmode = false
 
 -- Make line numbers default
 vim.wo.number = true
@@ -42,3 +48,21 @@ vim.o.completeopt = 'menuone,noselect'
 
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
+vim.opt.scrolloff = 2
+
+-- Configure how new splits should be opened
+vim.opt.splitright = true
+vim.opt.splitbelow = true
+
+-- Sets how neovim will display certain whitespace in the editor.
+--  See `:help 'list'`
+--  and `:help 'listchars'`
+vim.opt.list = true
+vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+
+-- Preview substitutions live, as you type!
+vim.opt.inccommand = 'split'
+
+-- Show which line your cursor is on
+vim.opt.cursorline = true
+
