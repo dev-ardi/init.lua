@@ -113,6 +113,8 @@ nmap('<leader>q', ':q<CR>', '[q]uit file')
 nmap('<leader>x', ':wqa<CR>', 'e[x]it nvim')
 nmap('<leader>n', ':enew<CR>', '[n]ew buffer')
 
+vim.keymap.set({ 'n', 'v' }, '<C-z>', '<C-a>')
+
 nmap('<leader>o', ':Ex<CR>', '[o]pen tree')
 vim.keymap.set('c', '<C-v>', '<C-r>+')
 
@@ -169,3 +171,18 @@ nmap('<leader>6', function() harpoon.nav_file(6) end, "harpoon go to 6")
 nmap('<leader>7', function() harpoon.nav_file(7) end, "harpoon go to 7")
 nmap('<leader>8', function() harpoon.nav_file(8) end, "harpoon go to 8")
 nmap('<leader>9', function() harpoon.nav_file(9) end, "harpoon go to 9")
+
+local function getPopups()
+  return vim.fn.filter(vim.api.nvim_tabpage_list_wins(0),
+    function(_, e) return vim.api.nvim_win_get_config(e).zindex end)
+end
+local function killPopups()
+  vim.fn.map(getPopups(), function(_, e)
+    vim.api.nvim_win_close(e, false)
+  end)
+end
+-- clear search highlight & kill popups
+vim.keymap.set("n", "<Esc>", function()
+  vim.cmd.noh()
+  killPopups()
+end)

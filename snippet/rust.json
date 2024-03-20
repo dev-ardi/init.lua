@@ -34,11 +34,20 @@
     ],
     "description": "#[cfg(…)]"
   },
+  "derive": {
+    "prefix": "derive",
+    "body": [
+      "#[derive(Debug, Clone, ${1})]"
+    ],
+    "description": "#[derive(Debug, Clone, ${1})]"
+  },
   "modtest": {
     "prefix": "modtest",
     "body": [
       "#[cfg(test)]",
       "mod test {",
+      "use super::*;",
+      "",
       "    #[test]",
       "    fn ${1:name}() {",
       "        ${2:todo!();}",
